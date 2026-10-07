@@ -1,0 +1,8 @@
+// Copy to Local.xcconfig (same folder), which is gitignored, and fill in.
+// Needed only to run on a physical device; the simulator builds without it.
+
+// Your Apple Developer Team ID (Xcode > Settings > Accounts).
+DEVELOPMENT_TEAM = YOUR_TEAM_ID
+
+// A prefix you own. The widget and App Group are derived from it.
+APP_BUNDLE_PREFIX = com.yourname.timemoney

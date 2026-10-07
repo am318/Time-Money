@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pick an iPhone simulator
+        id: sim
+        run: |
+          # First available iPhone, whatever the runner image ships.
+          name=$(xcrun simctl list devices available | grep -oE 'iPhone [0-9A-Za-z ]+ \(' | head -1 | sed 's/ ($//')
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "Using $name"
+
+      - name: Build and test (unsigned)
+        run: |
+          xcodebuild test \
+            -project TimeMoney.xcodeproj \
+            -scheme TimeMoney \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO
