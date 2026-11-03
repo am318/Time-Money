@@ -10,15 +10,35 @@ enum Fmt {
     /// payback month — runs in two. Formatting the answer cost a thousand times more
     /// than working it out. Configured once and then only read from, which
     /// NumberFormatter has been safe for since iOS 7.
-    private static let pencePrecision: NumberFormatter = currencyFormatter(pence: true)
-    private static let poundsOnly: NumberFormatter = currencyFormatter(pence: false)
+    /// The locale money is formatted in: the device's, so a US device sees dollars and a
+    /// UK one pounds. Under XCTest it is pinned to en_GB so the suite is deterministic
+    /// whatever the runner's region is; tests can also set it directly.
+    ///
+    /// Only the *formatting* follows the locale. The tax and Living Wage tables are UK
+    /// figures regardless, which is a known limit of this app.
+    static var locale: Locale = defaultLocale() {
+        didSet {
+            pencePrecision = currencyFormatter(pence: true)
+            poundsOnly = currencyFormatter(pence: false)
+            decimalFormatter = makeDecimalFormatter()
+        }
+    }
+
+    private static func defaultLocale() -> Locale {
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+            return Locale(identifier: "en_GB")
+        }
+        return Locale.current
+    }
+
+    private static var pencePrecision: NumberFormatter = currencyFormatter(pence: true)
+    private static var poundsOnly: NumberFormatter = currencyFormatter(pence: false)
+    private static var decimalFormatter: NumberFormatter = makeDecimalFormatter()
 
     private static func currencyFormatter(pence: Bool) -> NumberFormatter {
         let f = NumberFormatter()
         f.numberStyle = .currency
-        f.currencyCode = "GBP"
-        f.currencySymbol = "£"
-        f.locale = Locale(identifier: "en_GB")
+        f.locale = locale
         // Money rounds the way people do, not to the nearest even digit: £1,234.50 is £1,235.
         f.roundingMode = .halfUp
         f.minimumFractionDigits = pence ? 2 : 0
@@ -26,11 +46,44 @@ enum Fmt {
         return f
     }
 
+    private static func makeDecimalFormatter() -> NumberFormatter {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        f.locale = locale
+        f.usesGroupingSeparator = false
+        f.minimumFractionDigits = 0
+        f.maximumFractionDigits = 2
+        return f
+    }
+
+    /// The symbol for the current locale's currency, e.g. "£" or "$".
+    static var currencySymbol: String { pencePrecision.currencySymbol ?? "£" }
+
     static func money(_ value: Double, decimals: Bool? = nil) -> String {
         let magnitude = abs(value)
         let showPence = decimals ?? (magnitude < 100 && magnitude.truncatingRemainder(dividingBy: 1) != 0)
         let f = showPence ? pencePrecision : poundsOnly
-        return f.string(from: NSNumber(value: value)) ?? "£0"
+        return f.string(from: NSNumber(value: value)) ?? f.string(from: 0) ?? "0"
+    }
+
+    static func parseAmount(_ text: String) -> Double {
+        var t = text.replacingOccurrences(of: currencySymbol, with: "")
+            .replacingOccurrences(of: "£", with: "")
+            .trimmingCharacters(in: .whitespaces)
+        let group = decimalFormatter.groupingSeparator ?? ","
+        let decimal = decimalFormatter.decimalSeparator ?? "."
+        if group != decimal { t = t.replacingOccurrences(of: group, with: "") }
+        if let n = decimalFormatter.number(from: t) { return n.doubleValue }
+        return Double(t.replacingOccurrences(of: ",", with: "")) ?? 0
+    }
+
+    /// The inverse of `parseAmount`, for filling a box: no symbol, no grouping, and
+    /// pence only when there are some. Uses the locale's decimal mark, so what the
+    /// decimal pad types and what is shown agree.
+    static func editableAmount(_ value: Double) -> String {
+        guard value != 0 else { return "" }
+        let whole = value.truncatingRemainder(dividingBy: 1) == 0
+        return String(format: whole ? "%.0f" : "%.2f", locale: locale, value)
     }
 
     /// Money with no pence, for headline figures.

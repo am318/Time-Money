@@ -47,7 +47,7 @@ struct CurrencyField: View {
             HStack {
                 Text(title)
                 Spacer(minLength: 8)
-                Text("£")
+                Text(Fmt.currencySymbol)
                     .foregroundStyle(.secondary)
                 TextField(placeholder, text: $text)
                     .keyboardType(.decimalPad)
@@ -75,17 +75,9 @@ struct CurrencyField: View {
         }
     }
 
-    static func parse(_ s: String) -> Double {
-        Double(s.replacingOccurrences(of: ",", with: "")
-                .replacingOccurrences(of: "£", with: "")) ?? 0
-    }
+    static func parse(_ s: String) -> Double { Fmt.parseAmount(s) }
 
-    static func display(_ v: Double) -> String {
-        guard v != 0 else { return "" }
-        return v.truncatingRemainder(dividingBy: 1) == 0
-            ? String(Int(v))
-            : String(format: "%.2f", v)
-    }
+    static func display(_ v: Double) -> String { Fmt.editableAmount(v) }
 }
 
 /// A plain number row, for hours per week and similar.

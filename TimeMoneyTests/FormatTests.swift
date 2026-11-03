@@ -3,6 +3,39 @@ import XCTest
 
 final class FormatTests: XCTestCase {
 
+    override func setUp() {
+        super.setUp()
+        Fmt.locale = Locale(identifier: "en_GB")
+    }
+
+    override func tearDown() {
+        Fmt.locale = Locale(identifier: "en_GB")
+        super.tearDown()
+    }
+
+    func testMoneyFollowsTheLocalesCurrency() {
+        Fmt.locale = Locale(identifier: "en_US")
+        XCTAssertEqual(Fmt.currencySymbol, "$")
+        XCTAssertEqual(Fmt.money(2.5), "$2.50")
+        XCTAssertEqual(Fmt.money(1_234.5), "$1,235")
+        XCTAssertEqual(Fmt.rate(6.858), "$6.86/hr")
+    }
+
+    func testAmountsRoundTripThroughTheEntryBoxes() {
+        for id in ["en_GB", "en_US", "de_DE", "fr_FR"] {
+            Fmt.locale = Locale(identifier: id)
+            for v in [0.0, 5, 12.5, 1_234.56, 250_000] {
+                XCTAssertEqual(Fmt.parseAmount(Fmt.editableAmount(v)), v, accuracy: 0.001, "\(id) \(v)")
+            }
+        }
+        Fmt.locale = Locale(identifier: "en_GB")
+        XCTAssertEqual(Fmt.parseAmount("£1,234.50"), 1_234.5, accuracy: 0.001)
+        XCTAssertEqual(Fmt.parseAmount("12."), 12, accuracy: 0.001)
+        XCTAssertEqual(Fmt.parseAmount("abc"), 0)
+        XCTAssertEqual(Fmt.editableAmount(12.5), "12.50")
+        XCTAssertEqual(Fmt.editableAmount(40), "40")
+    }
+
     func testMoneyShowsPenceOnlyForSmallNonRoundSums() {
         XCTAssertEqual(Fmt.money(2.5), "£2.50")
         XCTAssertEqual(Fmt.money(120), "£120")

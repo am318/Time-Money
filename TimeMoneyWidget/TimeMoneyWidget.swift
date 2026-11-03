@@ -142,8 +142,8 @@ struct RateWidgetView: View {
     /// drop the pennies that would not fit.
     private func money(_ value: Double, decimals: Bool = true) -> String {
         value.formatted(
-            .currency(code: "GBP")
-                .locale(Locale(identifier: "en_GB"))
+            .currency(code: Locale.current.currency?.identifier ?? "GBP")
+                .locale(Locale.current)
                 .precision(.fractionLength(decimals ? 2 : 0))
         )
     }

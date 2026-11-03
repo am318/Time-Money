@@ -333,7 +333,7 @@ struct DecisionFlowView: View {
                     }
                     .buttonStyle(.plain)
                     Spacer(minLength: 8)
-                    Text("£").foregroundStyle(.secondary)
+                    Text(Fmt.currencySymbol).foregroundStyle(.secondary)
                     MoneyEntry(value: option.money)
                         .focused($focus, equals: moneyField)
                 }
@@ -391,7 +391,7 @@ struct DecisionFlowView: View {
                         if option.wrappedValue.effectiveSetupDirection == .receive {
                             Text("you get").font(.caption).foregroundStyle(.secondary)
                         }
-                        Text("£").foregroundStyle(.secondary)
+                        Text(Fmt.currencySymbol).foregroundStyle(.secondary)
                         MoneyEntry(value: option.setupMoney)
                             .focused($focus, equals: .setupMoney(side))
                     }
@@ -687,7 +687,7 @@ struct DecisionFlowView: View {
                         Text("How much would it cost?")
                             .font(.subheadline.weight(.semibold))
                         HStack {
-                            Text("£").foregroundStyle(.secondary)
+                            Text(Fmt.currencySymbol).foregroundStyle(.secondary)
                             Spacer(minLength: 8)
                             // Zero means "not said" rather than "costs nothing": somebody
                             // who meant nothing would have answered the question above.
