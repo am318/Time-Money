@@ -251,7 +251,7 @@ final class Store {
         try? data.write(to: copy)
     }
 
-    private static func defaultURL() -> URL {
+    static func defaultURL() -> URL {
         let base = (try? FileManager.default.url(for: .applicationSupportDirectory,
                                                  in: .userDomainMask,
                                                  appropriateFor: nil,
