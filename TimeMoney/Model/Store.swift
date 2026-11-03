@@ -147,6 +147,56 @@ final class Store {
         self.fileURL = url
 
         let data = try? Data(contentsOf: url)
+        switch PersistedState.load(from: data) {
+        case .loaded(let state):
+            self.profile = state.profile
+            self.decisions = state.decisions
+        case .empty:
+            self.profile = Profile()
+            self.decisions = []
+        case .unreadable, .tooNew:
+            self.profile = Profile()
+            self.decisions = []
+            // The file was there and could not be used. Keep it: the next save is about
+            // to write an empty state over the top, and a year of decisions is not
+            // something to lose quietly because one byte went wrong, or because the file
+            // came from a newer version of the app than this one.
+            if let data, !data.isEmpty { Store.preserve(data, alongside: url) }
+        }
+        refreshAttention()
+        refreshPortfolio()
+    }
+
+    /// How far back a decision keeps affecting the ones after it.
+    static let commitmentWindowDays: Double = 30
+
+    /// Money tied up by choices made in the last month. Positive is money out;
+    /// selling something recorded as income puts money back.
+    var recentlyCommitted: Double {
+        let cutoff = Date().addingTimeInterval(-Store.commitmentWindowDays * 86_400)
+        return decisions.reduce(0) { running, decision in
+            guard let amount = decision.committedMoney,
+                  let at = decision.committedAt, at >= cutoff else { return running }
+            return running + amount
+        }
+    }
+
+    var breakdown: RateBreakdown {
+        RateEngine.breakdown(for: profile,
+                             recentlyCommitted: recentlyCommitted,
+                             attention: attention,
+                             money: moneyCalibration)
+    }
+    var rate: Double { breakdown.personalHourlyRate }
+
+    private let fileURL: URL
+    private var saveTask: Task<Void, Never>?
+
+    init(fileURL: URL? = nil) {
+        let url = fileURL ?? Store.defaultURL()
+        self.fileURL = url
+
+        let data = try? Data(contentsOf: url)
         if let data, let state = try? JSONDecoder().decode(PersistedState.self, from: data) {
             self.profile = state.profile
             self.decisions = state.decisions
@@ -162,13 +212,65 @@ final class Store {
         refreshPortfolio()
     }
 
-    private struct PersistedState: Codable {
+    /// What is written to `state.json`.
+    ///
+    /// `schemaVersion` is the version of this file's layout. A file with none is from
+    /// before versioning and is read as version 1 (the layout has not changed since).
+    /// To change the layout: bump `currentSchemaVersion`, add a step to `migrations`
+    /// that rewrites the JSON from the previous version, and add a fixture test.
+    struct PersistedState: Codable, Equatable {
+        static let currentSchemaVersion = 1
+
+        var schemaVersion: Int = PersistedState.currentSchemaVersion
         var profile: Profile
         var decisions: [Decision]
 
         init(profile: Profile, decisions: [Decision]) {
             self.profile = profile
             self.decisions = decisions
+        }
+
+        enum LoadResult: Equatable {
+            case loaded(PersistedState)
+            /// No file, or an empty one: a first launch.
+            case empty
+            case unreadable
+            /// Written by a newer app. Not opened, so it is neither misread nor
+            /// silently downgraded.
+            case tooNew(Int)
+        }
+
+        /// Rewrites the JSON from version `n` to `n + 1`, keyed by `n`. Empty while the
+        /// layout is still version 1; `load` walks it so adding a step is all a
+        /// future change needs.
+        static let migrations: [Int: ([String: Any]) -> [String: Any]] = [:]
+
+        static func load(from data: Data?) -> LoadResult {
+            guard let data, !data.isEmpty else { return .empty }
+            guard var object = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
+                return .unreadable
+            }
+            let found = object["schemaVersion"] as? Int ?? 1
+            guard found <= currentSchemaVersion else { return .tooNew(found) }
+            var payload = data
+            if found < currentSchemaVersion {
+                // Only a file from an older layout is re-serialised; a current one is
+                // decoded as written, byte for byte.
+                var version = found
+                while version < currentSchemaVersion {
+                    if let step = migrations[version] { object = step(object) }
+                    version += 1
+                }
+                object["schemaVersion"] = currentSchemaVersion
+                guard let migrated = try? JSONSerialization.data(withJSONObject: object) else {
+                    return .unreadable
+                }
+                payload = migrated
+            }
+            guard let state = try? JSONDecoder().decode(PersistedState.self, from: payload) else {
+                return .unreadable
+            }
+            return .loaded(state)
         }
 
         /// Decoded apart, so that one half failing doesn't take the other with it.
@@ -180,6 +282,7 @@ final class Store {
         /// not replaceable.
         init(from decoder: Decoder) throws {
             let c = try decoder.container(keyedBy: CodingKeys.self)
+            schemaVersion = (try? c.decode(Int.self, forKey: .schemaVersion)) ?? 1
             profile = (try? c.decode(Profile.self, forKey: .profile)) ?? Profile()
             decisions = (try? c.decode([Decision].self, forKey: .decisions)) ?? []
         }
