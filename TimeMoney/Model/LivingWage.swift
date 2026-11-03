@@ -102,19 +102,16 @@ enum LivingWage {
 
     /// London, oldest first.
     ///
-    /// Sources are the Living Wage Foundation's announcements for each year. Where a
-    /// row carries no explicit announcement date, Living Wage Week's usual first-week-
-    /// of-November slot is assumed; the two that are known exactly say so.
-    static let london: [LivingWageRate] = [
-        LivingWageRate(announcedIn: 2018, pence: 1_055),
-        LivingWageRate(announcedIn: 2019, pence: 1_075),
-        LivingWageRate(announcedIn: 2020, pence: 1_085, announcedMonth: 11, announcedDay: 9),
-        LivingWageRate(announcedIn: 2021, pence: 1_105),
-        LivingWageRate(announcedIn: 2022, pence: 1_195),
-        LivingWageRate(announcedIn: 2023, pence: 1_315),
-        LivingWageRate(announcedIn: 2024, pence: 1_385),
-        LivingWageRate(announcedIn: 2025, pence: 1_480, announcedMonth: 10, announcedDay: 22)
-    ]
+    /// Loaded from `Resources/living-wage-london.json`; adding the new year's row there
+    /// is the whole of the annual update. Sources are the Living Wage Foundation's
+    /// announcements for each year. Where an announcement date is not known exactly,
+    /// Living Wage Week's usual first-week-of-November slot is used.
+    static let london: [LivingWageRate] = DataTables.load(RateFile.self, from: "living-wage-london").rates
+
+    private struct RateFile: Decodable {
+        let schemaVersion: Int
+        let rates: [LivingWageRate]
+    }
 
     /// The earliest date the table can speak about. Anything before this gets the
     /// first row, and a caller that cares should ask `covers(_:)` first.

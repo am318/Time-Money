@@ -1,6 +1,6 @@
 import Foundation
 
-/// A deliberately simple UK take-home estimator for the 2025/26 tax year.
+/// A deliberately simple UK take-home estimator. The figures come from `uk-tax.json`.
 ///
 /// It is an estimate, not a payslip. It covers the common case — one PAYE job,
 /// standard tax code, salary-sacrifice pension — and ignores benefits in kind,
@@ -8,33 +8,70 @@ import Foundation
 /// in the UI, and the user can always switch to entering take-home directly.
 enum UKTax {
 
-    struct Band {
+    struct Band: Decodable {
         let width: Double   // width of the band in taxable income; .infinity for the top band
+        let rate: Double
+
+        init(width: Double, rate: Double) {
+            self.width = width
+            self.rate = rate
+        }
+
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            width = try c.decodeIfPresent(Double.self, forKey: .width) ?? .infinity
+            rate = try c.decode(Double.self, forKey: .rate)
+        }
+
+        private enum CodingKeys: String, CodingKey { case width, rate }
+    }
+
+    struct StudentLoanTerms: Decodable {
+        let threshold: Double
         let rate: Double
     }
 
-    static let personalAllowance: Double = 12_570
-    static let allowanceTaperStart: Double = 100_000
+    /// The year's figures, loaded from `Resources/uk-tax.json`. To roll to a new tax
+    /// year, edit that file and its `taxYear`, `validFrom` and `validTo`.
+    struct Tables: Decodable {
+        struct NationalInsurance: Decodable {
+            let primaryThreshold: Double
+            let upperEarningsLimit: Double
+            let mainRate: Double
+            let upperRate: Double
+        }
 
-    static let englandBands: [Band] = [
-        Band(width: 37_700, rate: 0.20),
-        Band(width: 74_870, rate: 0.40),   // up to £125,140 gross
-        Band(width: .infinity, rate: 0.45)
-    ]
+        let schemaVersion: Int
+        let taxYear: String
+        let validFrom: String
+        let validTo: String
+        let personalAllowance: Double
+        let allowanceTaperStart: Double
+        let england: [Band]
+        let scotland: [Band]
+        let nationalInsurance: NationalInsurance
+        let studentLoan: [String: StudentLoanTerms]
 
-    static let scotlandBands: [Band] = [
-        Band(width: 2_827, rate: 0.19),
-        Band(width: 12_094, rate: 0.20),
-        Band(width: 16_171, rate: 0.21),
-        Band(width: 31_338, rate: 0.42),
-        Band(width: 50_140, rate: 0.45),
-        Band(width: .infinity, rate: 0.48)
-    ]
+        /// True once the tax year the tables describe has ended.
+        func isExpired(asOf date: Date = Date()) -> Bool {
+            guard let end = DataTables.date(validTo) else { return true }
+            // validTo is the last day of the year, so it expires the day after.
+            return date >= end.addingTimeInterval(24 * 60 * 60)
+        }
+    }
 
-    static let niPrimaryThreshold: Double = 12_570
-    static let niUpperEarningsLimit: Double = 50_270
-    static let niMainRate: Double = 0.08
-    static let niUpperRate: Double = 0.02
+    static let tables: Tables = DataTables.load(Tables.self, from: "uk-tax")
+
+    static var personalAllowance: Double { tables.personalAllowance }
+    static var allowanceTaperStart: Double { tables.allowanceTaperStart }
+
+    static var englandBands: [Band] { tables.england }
+    static var scotlandBands: [Band] { tables.scotland }
+
+    static var niPrimaryThreshold: Double { tables.nationalInsurance.primaryThreshold }
+    static var niUpperEarningsLimit: Double { tables.nationalInsurance.upperEarningsLimit }
+    static var niMainRate: Double { tables.nationalInsurance.mainRate }
+    static var niUpperRate: Double { tables.nationalInsurance.upperRate }
 
     struct Result {
         let gross: Double

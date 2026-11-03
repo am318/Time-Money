@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "taxYear": "2025/26",
+  "validFrom": "2025-04-06",
+  "validTo": "2026-04-05",
+  "personalAllowance": 12570,
+  "allowanceTaperStart": 100000,
+  "england": [
+    { "width": 37700, "rate": 0.20 },
+    { "width": 74870, "rate": 0.40 },
+    { "width": null, "rate": 0.45 }
+  ],
+  "scotland": [
+    { "width": 2827, "rate": 0.19 },
+    { "width": 12094, "rate": 0.20 },
+    { "width": 16171, "rate": 0.21 },
+    { "width": 31338, "rate": 0.42 },
+    { "width": 50140, "rate": 0.45 },
+    { "width": null, "rate": 0.48 }
+  ],
+  "nationalInsurance": {
+    "primaryThreshold": 12570,
+    "upperEarningsLimit": 50270,
+    "mainRate": 0.08,
+    "upperRate": 0.02
+  },
+  "studentLoan": {
+    "plan1": { "threshold": 26065, "rate": 0.09 },
+    "plan2": { "threshold": 28470, "rate": 0.09 },
+    "plan4": { "threshold": 32745, "rate": 0.09 },
+    "plan5": { "threshold": 25000, "rate": 0.09 },
+    "postgraduate": { "threshold": 21000, "rate": 0.06 }
+  }
+}

@@ -114,24 +114,12 @@ enum StudentLoanPlan: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    var threshold: Double {
-        switch self {
-        case .none: return .infinity
-        case .plan1: return 26_065
-        case .plan2: return 28_470
-        case .plan4: return 32_745
-        case .plan5: return 25_000
-        case .postgraduate: return 21_000
-        }
-    }
+    /// Thresholds and rates come from `uk-tax.json`, so a new tax year is a data change.
+    private var terms: UKTax.StudentLoanTerms? { UKTax.tables.studentLoan[rawValue] }
 
-    var rate: Double {
-        switch self {
-        case .postgraduate: return 0.06
-        case .none: return 0
-        default: return 0.09
-        }
-    }
+    var threshold: Double { terms?.threshold ?? .infinity }
+
+    var rate: Double { terms?.rate ?? 0 }
 }
 
 enum TaxRegion: String, Codable, CaseIterable, Identifiable {

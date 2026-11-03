@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "rates": [
+    { "announcedIn": 2018, "pence": 1055, "announcedMonth": 11, "announcedDay": 1 },
+    { "announcedIn": 2019, "pence": 1075, "announcedMonth": 11, "announcedDay": 1 },
+    { "announcedIn": 2020, "pence": 1085, "announcedMonth": 11, "announcedDay": 9 },
+    { "announcedIn": 2021, "pence": 1105, "announcedMonth": 11, "announcedDay": 1 },
+    { "announcedIn": 2022, "pence": 1195, "announcedMonth": 11, "announcedDay": 1 },
+    { "announcedIn": 2023, "pence": 1315, "announcedMonth": 11, "announcedDay": 1 },
+    { "announcedIn": 2024, "pence": 1385, "announcedMonth": 11, "announcedDay": 1 },
+    { "announcedIn": 2025, "pence": 1480, "announcedMonth": 10, "announcedDay": 22 }
+  ]
+}
