@@ -10,6 +10,7 @@ struct ReviewView: View {
         ScrollView {
             VStack(spacing: 16) {
                 CalibrationCard()
+                ReviewReportCard()
 
                 if store.awaitingReview.isEmpty {
                     Card {
@@ -432,5 +433,29 @@ struct RateTrendChart: View {
     private var summary: String {
         guard let first = points.first, let last = points.last else { return "" }
         return "From \(Fmt.rate(first.rate)) to \(Fmt.rate(last.rate)) across \(points.count) readings"
+    }
+}
+
+/// Following the answer against going your own way, as the reviews saw it. Only shown
+/// once there are enough reviews to say anything.
+struct ReviewReportCard: View {
+    @Environment(Store.self) private var store
+
+    var body: some View {
+        let report = ReviewReport.make(from: store.decisions)
+        if let summary = report.summary {
+            Card {
+                VStack(alignment: .leading, spacing: 8) {
+                    Label("How the answers have held up", systemImage: "checkmark.seal")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                    Text(summary)
+                        .font(.subheadline)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text("From \(report.reviewed) reviews, on this phone only. \u{201C}Can\u{2019}t tell\u{201D} counts for nothing.")
+                        .font(.caption).foregroundStyle(.tertiary)
+                }
+            }
+        }
     }
 }
