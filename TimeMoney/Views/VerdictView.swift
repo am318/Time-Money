@@ -178,6 +178,12 @@ struct VerdictView: View {
 
                 if breakEven > 0 {
                     BreakEvenScale(yourRate: evaluation.rate, breakEven: breakEven)
+                    RateScrubber(
+                        whatIf: RateWhatIf(decision: decision, profile: store.profile,
+                                           evaluation: evaluation,
+                                           calibration: store.timeCalibration,
+                                           money: store.moneyCalibration),
+                        nameA: nameA, nameB: nameB)
                     if let price = evaluation.pricePerHourSaved {
                         Text("Put another way: you'd be paying \(Fmt.money(price)) for every hour it saves you.")
                             .font(.footnote).foregroundStyle(.secondary)
@@ -527,6 +533,55 @@ struct BreakEvenScale: View {
                     Text(Fmt.rate(breakEven)).font(.caption.weight(.semibold).monospacedDigit())
                 }
             }
+        }
+    }
+}
+
+/// Drag to try a different hourly rate and watch the answer. The point of the tipping
+/// point is that you do not have to believe the rate, and this lets you check how much
+/// you would have to disbelieve it before the answer changed.
+struct RateScrubber: View {
+    let whatIf: RateWhatIf
+    let nameA: String
+    let nameB: String
+
+    @State private var rate: Double = 0
+    @State private var started = false
+
+    private var outcome: RateWhatIf.Outcome { whatIf.outcome(atRate: rate) }
+    private var changed: Bool { whatIf.flips(atRate: rate) }
+
+    private var summary: String {
+        let o = outcome
+        let name = o.winner == .a ? nameA : nameB
+        return o.isDecisive ? "\(name) wins" : "Too close to call. \(name) by a nose"
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Divider()
+            Text("Try a different rate")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+            HStack(alignment: .firstTextBaseline) {
+                Text(Fmt.rate(rate)).font(.headline.monospacedDigit())
+                Spacer()
+                if rate != whatIf.baseRate {
+                    Button("Reset") { rate = whatIf.baseRate }
+                        .font(.caption)
+                }
+            }
+            Slider(value: $rate, in: whatIf.range, step: 0.5)
+                .accessibilityLabel("Hourly rate to try")
+                .accessibilityValue(Fmt.rate(rate))
+            Text(summary + (changed ? ", which is different from your answer." : "."))
+                .font(.footnote)
+                .foregroundStyle(changed ? Color.orange : Color.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.updatesFrequently)
+        }
+        .onAppear {
+            if !started { rate = whatIf.baseRate; started = true }
         }
     }
 }
