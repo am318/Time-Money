@@ -582,6 +582,4 @@ final class Store {
             return chosen != recommended && recommended != Side.tooClose.rawValue
         }.count
     }
-
-}
 }
