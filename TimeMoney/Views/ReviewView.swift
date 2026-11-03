@@ -1,3 +1,4 @@
+import Charts
 import SwiftUI
 
 /// Looking back, with no pressure attached. Nothing here keeps score, nothing
@@ -287,6 +288,45 @@ struct HistoryView: View {
                 }
             }
 
+            if store.profile.rateHistory.count >= 2 {
+                Section {
+                    RateTrendChart(points: store.profile.rateHistory)
+                    if let change = RateHistory.change(
+                        in: store.profile.rateHistory,
+                        since: Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? .distantPast) {
+                        StatRow(label: "Over the last three months",
+                                value: change >= 0 ? "+\(Int((change * 100).rounded()))%" : "\(Int((change * 100).rounded()))%")
+                    }
+                } header: {
+                    Text("Your rate over time")
+                } footer: {
+                    Text("One reading a day at most, and only when it moved.")
+                }
+            }
+
+            let months = Trends.monthly(decisions: store.decisions, profile: store.profile,
+                                        rate: store.rate, calibration: store.timeCalibration)
+            if months.count >= 2 {
+                Section("By month") {
+                    ForEach(months.reversed()) { m in
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(m.month, format: .dateTime.month(.wide).year())
+                                Text("\(m.decisions) decision\(m.decisions == 1 ? "" : "s")")
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            VStack(alignment: .trailing, spacing: 2) {
+                                Text(Fmt.money(m.moneyAvoided, decimals: false)).monospacedDigit()
+                                Text(Fmt.duration(hours: m.hoursGivenBack))
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                        .accessibilityElement(children: .combine)
+                    }
+                }
+            }
+
             if !store.activeCommitments.isEmpty {
                 Section {
                     ForEach(store.activeCommitments) { decision in
@@ -360,5 +400,37 @@ struct HistoryView: View {
                                        description: Text("Work something out, then tap Save what I did if you want to keep it."))
             }
         }
+    }
+}
+
+/// The rate as a line, newest on the right.
+struct RateTrendChart: View {
+    let points: [RatePoint]
+
+    var body: some View {
+        Chart(points) { p in
+            LineMark(x: .value("Date", p.date), y: .value("Rate", p.rate))
+                .interpolationMethod(.monotone)
+            PointMark(x: .value("Date", p.date), y: .value("Rate", p.rate))
+                .symbolSize(points.count > 30 ? 0 : 24)
+        }
+        .chartYScale(domain: .automatic(includesZero: false))
+        .chartYAxis {
+            AxisMarks { value in
+                AxisGridLine()
+                AxisValueLabel {
+                    if let v = value.as(Double.self) { Text(Fmt.moneyRounded(v)) }
+                }
+            }
+        }
+        .frame(height: 160)
+        .accessibilityElement()
+        .accessibilityLabel("Hourly rate over time")
+        .accessibilityValue(summary)
+    }
+
+    private var summary: String {
+        guard let first = points.first, let last = points.last else { return "" }
+        return "From \(Fmt.rate(first.rate)) to \(Fmt.rate(last.rate)) across \(points.count) readings"
     }
 }

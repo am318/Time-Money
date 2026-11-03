@@ -18,6 +18,7 @@ struct TimeMoneyApp: App {
                 // the only moment worth looking, and it costs one file read.
                 store.refreshAttention()
                 store.settleSavingsBaseline()
+                store.recordRatePoint()
                 store.runAutoBackupIfDue()
             }
         }

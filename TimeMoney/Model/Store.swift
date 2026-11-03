@@ -426,6 +426,15 @@ final class Store {
         SavingsRatchet.decline(raise, in: &profile)
     }
 
+    /// Logs today's rate if it has moved. Called when the app opens or returns, not from
+    /// a property observer, for the same reason as `settleSavingsBaseline`: it writes to
+    /// the profile, and the profile's observer saves.
+    func recordRatePoint() {
+        guard profile.hasCompletedSetup,
+              let updated = RateHistory.recording(rate, into: profile.rateHistory) else { return }
+        profile.rateHistory = updated
+    }
+
     func saveNow() {
         saveTask?.cancel()
         Store.write(PersistedState(profile: profile, decisions: decisions), to: fileURL)

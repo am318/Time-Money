@@ -418,6 +418,9 @@ struct Profile: Codable, Equatable {
     /// Off by default, and cancelled as soon as the decision is reviewed.
     var reviewRemindersEnabled: Bool = false
 
+    /// How the rate has moved, one reading a day at most. See `RateHistory`.
+    var rateHistory: [RatePoint] = []
+
     /// Whether there is genuinely slack to loosen with. Deliberately computed from
     /// the profile alone so it stays cheap — the evaluation runs this many times over.
     var hasSlack: Bool {
@@ -499,5 +502,6 @@ extension Profile {
         requireBiometricUnlock = try c.decodeIfPresent(Bool.self, forKey: .requireBiometricUnlock) ?? fresh.requireBiometricUnlock
         weeklyReviewEnabled = try c.decodeIfPresent(Bool.self, forKey: .weeklyReviewEnabled) ?? fresh.weeklyReviewEnabled
         reviewRemindersEnabled = try c.decodeIfPresent(Bool.self, forKey: .reviewRemindersEnabled) ?? fresh.reviewRemindersEnabled
+        rateHistory = try c.decodeIfPresent([RatePoint].self, forKey: .rateHistory) ?? fresh.rateHistory
     }
 }
