@@ -90,6 +90,15 @@ point doesn't depend on the rate at all, which is why it survives a wrong one.
   analytics. Optional Face ID lock, unattended local backups (restorable from
   Settings), JSON export and restore.
 - **A home-screen widget** and Lock Screen controls showing your current rate.
+- **Try a different rate.** A slider on the tipping-point card re-runs the decision at
+  any hourly rate, so you can see how wrong the rate would have to be before the
+  answer changed.
+- **Look-back tools.** Opt-in "how did it go?" reminders the morning after a decision,
+  a rate-over-time chart, monthly totals, and a report comparing outcomes when you
+  followed the answer against when you didn't.
+- **Siri and Shortcuts.** Spoken or Spotlight shortcuts for the main screens, plus a
+  headless "Quick answer" action that compares two options without opening the app.
+- **Optional iCloud Drive copy** of automatic backups (needs a paid team; see below).
 
 51 preset situations (grouped by how often they come up), each declaring which
 questions it can't be answered without. The long version of how this was designed, and
@@ -119,7 +128,16 @@ the entitlements and Info.plists. Nothing else needs editing. The App Group, whi
 widget uses to read what the app writes, needs a correctly provisioned team; on a
 simulator it works unsigned.
 
-Tests (pure logic, about 80 of them, well under a second):
+To also copy automatic backups to iCloud Drive, add to `Config/Local.xcconfig` (paid
+team with the iCloud capability and an `iCloud.<prefix>` container):
+
+```
+APP_ENTITLEMENTS = TimeMoney-iCloud.entitlements
+ICLOUD_ENABLED = YES
+```
+
+Tests (mostly pure logic, well under a second; plus a small UI smoke test and layout
+snapshots, which are skipped until baselines are recorded with `SNAPSHOT_RECORD=1`):
 
 ```bash
 xcodebuild test -project TimeMoney.xcodeproj -scheme TimeMoney \
@@ -132,6 +150,7 @@ CI (`.github/workflows/ci.yml`) does the same on `macos-latest`.
 
 | Path | What's there |
 |---|---|
+| `TimeMoney/Resources/` | Versioned JSON data: tax bands, Living Wage, and the 51 scenario presets |
 | `TimeMoney/Model/` | All the logic, with no UI imports: `RateEngine`, `DecisionEngine`, `QuestionPlanner`, `UKTax`, `Review`, `Scenarios`, persistence, backup, formatting |
 | `TimeMoney/Views/` | SwiftUI screens: home, decision flow, verdict, settings, review |
 | `Shared/` | Code compiled into both the app and the widget: the snapshot the widget draws, App Group lookup, widget intents |
@@ -149,8 +168,10 @@ sleep, and the width of the "too close" band.
 
 - **The rate is a model, not a measurement.** That's why the tipping point is the
   headline. Reviews only ever *offer* a correction.
-- **UK only.** Currency is hard-coded to £; the tax estimator covers one PAYE job with
-  a standard code. The Living Wage table needs updating each autumn.
+- **UK tax and wage tables only.** Money is formatted in the device's currency, but the
+  tax estimator covers one UK PAYE job with a standard code. The figures live in
+  `TimeMoney/Resources/uk-tax.json` and `living-wage-london.json`; two tests are marked
+  as expected failures until those are refreshed (the 2025/26 tax year has ended).
 - **The audit's headline sweeps are reproduced, not replayed.** The figures quoted in
   `docs/DESIGN.md` came from larger randomised runs. `ScenarioSweepTests` checks the same
   properties over every preset on a fixed grid: at most three follow-ups, no repeats,
