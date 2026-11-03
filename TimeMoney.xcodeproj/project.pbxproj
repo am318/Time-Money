@@ -25,6 +25,13 @@
 			remoteGlobalIDString = 1A2B3C000000000000000011;
 			remoteInfo = TimeMoneyWidgetExtension;
 		};
+		1A2B3C000000000000000062 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A2B3C000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A2B3C000000000000000005;
+			remoteInfo = TimeMoney;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -46,6 +53,7 @@
 		1A2B3C000000000000000004 /* TimeMoney.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeMoney.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A2B3C000000000000000010 /* TimeMoneyWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TimeMoneyWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A2B3C000000000000000053 /* TimeMoneyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimeMoneyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A2B3C000000000000000063 /* TimeMoneyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimeMoneyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -67,6 +75,11 @@
 		1A2B3C000000000000000050 /* TimeMoneyTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = TimeMoneyTests;
+			sourceTree = "<group>";
+		};
+		1A2B3C000000000000000060 /* TimeMoneyUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TimeMoneyUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -93,6 +106,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1A2B3C000000000000000064 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -111,6 +131,7 @@
 				1A2B3C000000000000000013 /* Shared */,
 				1A2B3C000000000000000012 /* TimeMoneyWidget */,
 				1A2B3C000000000000000050 /* TimeMoneyTests */,
+				1A2B3C000000000000000060 /* TimeMoneyUITests */,
 				1A2B3C000000000000000041 /* Config */,
 				1A2B3C000000000000000003 /* Products */,
 			);
@@ -122,6 +143,7 @@
 				1A2B3C000000000000000004 /* TimeMoney.app */,
 				1A2B3C000000000000000010 /* TimeMoneyWidgetExtension.appex */,
 				1A2B3C000000000000000053 /* TimeMoneyTests.xctest */,
+				1A2B3C000000000000000063 /* TimeMoneyUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -200,6 +222,29 @@
 			productReference = 1A2B3C000000000000000053 /* TimeMoneyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		1A2B3C000000000000000061 /* TimeMoneyUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A2B3C000000000000000068 /* Build configuration list for PBXNativeTarget "TimeMoneyUITests" */;
+			buildPhases = (
+				1A2B3C000000000000000065 /* Sources */,
+				1A2B3C000000000000000064 /* Frameworks */,
+				1A2B3C000000000000000066 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1A2B3C000000000000000067 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1A2B3C000000000000000060 /* TimeMoneyUITests */,
+			);
+			name = TimeMoneyUITests;
+			packageProductDependencies = (
+			);
+			productName = TimeMoneyUITests;
+			productReference = 1A2B3C000000000000000063 /* TimeMoneyUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -217,6 +262,10 @@
 						CreatedOnToolsVersion = 16.4;
 					};
 					1A2B3C000000000000000051 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 1A2B3C000000000000000005;
+					};
+					1A2B3C000000000000000061 = {
 						CreatedOnToolsVersion = 16.4;
 						TestTargetID = 1A2B3C000000000000000005;
 					};
@@ -239,6 +288,7 @@
 				1A2B3C000000000000000005 /* TimeMoney */,
 				1A2B3C000000000000000011 /* TimeMoneyWidgetExtension */,
 				1A2B3C000000000000000051 /* TimeMoneyTests */,
+				1A2B3C000000000000000061 /* TimeMoneyUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -259,6 +309,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		1A2B3C000000000000000056 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A2B3C000000000000000066 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -289,6 +346,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1A2B3C000000000000000065 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -301,6 +365,11 @@
 			isa = PBXTargetDependency;
 			target = 1A2B3C000000000000000005 /* TimeMoney */;
 			targetProxy = 1A2B3C000000000000000052 /* PBXContainerItemProxy */;
+		};
+		1A2B3C000000000000000067 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A2B3C000000000000000005 /* TimeMoney */;
+			targetProxy = 1A2B3C000000000000000062 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -520,6 +589,42 @@
 			};
 			name = Release;
 		};
+		1A2B3C000000000000000069 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(APP_BUNDLE_PREFIX).uitests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = TimeMoney;
+			};
+			name = Debug;
+		};
+		1A2B3C00000000000000006A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(APP_BUNDLE_PREFIX).uitests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = TimeMoney;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -555,6 +660,15 @@
 			buildConfigurations = (
 				1A2B3C000000000000000059 /* Debug */,
 				1A2B3C00000000000000005A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A2B3C000000000000000068 /* Build configuration list for PBXNativeTarget "TimeMoneyUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A2B3C000000000000000069 /* Debug */,
+				1A2B3C00000000000000006A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
