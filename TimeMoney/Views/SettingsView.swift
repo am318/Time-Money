@@ -184,10 +184,14 @@ struct SettingsView: View {
                     .onChange(of: store.profile.weeklyReviewEnabled) { _, _ in
                         store.applyWeeklyReminderSetting()
                     }
+                Toggle("Remind me the day after", isOn: $store.profile.reviewRemindersEnabled)
+                    .onChange(of: store.profile.reviewRemindersEnabled) { _, _ in
+                        store.syncReviewReminders(requestPermission: true)
+                    }
             } header: {
                 Text("Reviewing decisions")
             } footer: {
-                Text("Entirely optional, and nothing keeps score. It exists so the app can check its own rate against how things actually turned out.")
+                Text("Entirely optional, and nothing keeps score. It exists so the app can check its own rate against how things actually turned out. \u{201C}Remind me the day after\u{201D} sends one quiet notification per saved decision, and cancels it once you have looked back.")
             }
 
             // MARK: Feel

@@ -322,6 +322,7 @@ final class Store {
             try? await Task.sleep(for: .milliseconds(400))
             guard !Task.isCancelled else { return }
             Store.write(state, to: url)
+            ReviewReminders.sync(decisions: decisionsCopy, enabled: profileCopy.reviewRemindersEnabled)
             // Debounced with the save, so a decision being edited does not rewrite
             // the shared file on every keystroke.
             TimeMoneyPublisher.publishIfLinked(profile: profileCopy,
@@ -428,6 +429,7 @@ final class Store {
     func saveNow() {
         saveTask?.cancel()
         Store.write(PersistedState(profile: profile, decisions: decisions), to: fileURL)
+        syncReviewReminders()
         publishForPortfolio()
         WidgetBridge.refresh(store: self)
     }
@@ -686,6 +688,17 @@ final class Store {
                 content: content,
                 trigger: UNCalendarNotificationTrigger(dateMatching: when, repeats: true))
             centre.add(request)
+        }
+    }
+
+    /// Schedules (or clears) the per-decision "how did it go?" notifications.
+    func syncReviewReminders(requestPermission: Bool = false) {
+        if requestPermission && profile.reviewRemindersEnabled {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { [decisions] _, _ in
+                ReviewReminders.sync(decisions: decisions, enabled: true)
+            }
+        } else {
+            ReviewReminders.sync(decisions: decisions, enabled: profile.reviewRemindersEnabled)
         }
     }
 

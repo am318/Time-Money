@@ -414,6 +414,10 @@ struct Profile: Codable, Equatable {
     /// Sunday-evening nudge to look back at the week's decisions.
     var weeklyReviewEnabled: Bool = false
 
+    /// A one-off notification the day after each saved decision, asking how it went.
+    /// Off by default, and cancelled as soon as the decision is reviewed.
+    var reviewRemindersEnabled: Bool = false
+
     /// Whether there is genuinely slack to loosen with. Deliberately computed from
     /// the profile alone so it stays cheap — the evaluation runs this many times over.
     var hasSlack: Bool {
@@ -494,5 +498,6 @@ extension Profile {
         hasCompletedSetup = try c.decodeIfPresent(Bool.self, forKey: .hasCompletedSetup) ?? fresh.hasCompletedSetup
         requireBiometricUnlock = try c.decodeIfPresent(Bool.self, forKey: .requireBiometricUnlock) ?? fresh.requireBiometricUnlock
         weeklyReviewEnabled = try c.decodeIfPresent(Bool.self, forKey: .weeklyReviewEnabled) ?? fresh.weeklyReviewEnabled
+        reviewRemindersEnabled = try c.decodeIfPresent(Bool.self, forKey: .reviewRemindersEnabled) ?? fresh.reviewRemindersEnabled
     }
 }
