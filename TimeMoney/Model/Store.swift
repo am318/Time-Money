@@ -694,8 +694,9 @@ final class Store {
     /// Schedules (or clears) the per-decision "how did it go?" notifications.
     func syncReviewReminders(requestPermission: Bool = false) {
         if requestPermission && profile.reviewRemindersEnabled {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { [decisions] _, _ in
-                ReviewReminders.sync(decisions: decisions, enabled: true)
+            let snapshot = decisions
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in
+                ReviewReminders.sync(decisions: snapshot, enabled: true)
             }
         } else {
             ReviewReminders.sync(decisions: decisions, enabled: profile.reviewRemindersEnabled)
