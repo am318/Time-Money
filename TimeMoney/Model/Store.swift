@@ -167,51 +167,6 @@ final class Store {
         refreshPortfolio()
     }
 
-    /// How far back a decision keeps affecting the ones after it.
-    static let commitmentWindowDays: Double = 30
-
-    /// Money tied up by choices made in the last month. Positive is money out;
-    /// selling something recorded as income puts money back.
-    var recentlyCommitted: Double {
-        let cutoff = Date().addingTimeInterval(-Store.commitmentWindowDays * 86_400)
-        return decisions.reduce(0) { running, decision in
-            guard let amount = decision.committedMoney,
-                  let at = decision.committedAt, at >= cutoff else { return running }
-            return running + amount
-        }
-    }
-
-    var breakdown: RateBreakdown {
-        RateEngine.breakdown(for: profile,
-                             recentlyCommitted: recentlyCommitted,
-                             attention: attention,
-                             money: moneyCalibration)
-    }
-    var rate: Double { breakdown.personalHourlyRate }
-
-    private let fileURL: URL
-    private var saveTask: Task<Void, Never>?
-
-    init(fileURL: URL? = nil) {
-        let url = fileURL ?? Store.defaultURL()
-        self.fileURL = url
-
-        let data = try? Data(contentsOf: url)
-        if let data, let state = try? JSONDecoder().decode(PersistedState.self, from: data) {
-            self.profile = state.profile
-            self.decisions = state.decisions
-        } else {
-            self.profile = Profile()
-            self.decisions = []
-            // The file was there and could not be read at all. Keep it: the next save
-            // is about to write an empty state over the top, and a year of decisions is
-            // not something to lose quietly because one byte went wrong.
-            if let data, !data.isEmpty { Store.preserve(data, alongside: url) }
-        }
-        refreshAttention()
-        refreshPortfolio()
-    }
-
     /// What is written to `state.json`.
     ///
     /// `schemaVersion` is the version of this file's layout. A file with none is from
