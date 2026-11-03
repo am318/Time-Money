@@ -5,5 +5,22 @@
 	<!-- Read at runtime by Shared/AppGroup.swift, so the App Group is set in one place. -->
 	<key>AppGroupID</key>
 	<string>$(APP_GROUP_ID)</string>
+	<!-- "YES" when the build is signed with TimeMoney-iCloud.entitlements. -->
+	<key>ICloudEntitlementEnabled</key>
+	<string>$(ICLOUD_ENABLED)</string>
+	<!-- Only meaningful in a build signed with TimeMoney-iCloud.entitlements: makes the
+	     backup folder visible in the Files app under iCloud Drive. -->
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>$(ICLOUD_CONTAINER_ID)</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerName</key>
+			<string>Time Money</string>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>One</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

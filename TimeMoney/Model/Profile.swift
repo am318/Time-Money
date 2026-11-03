@@ -421,6 +421,10 @@ struct Profile: Codable, Equatable {
     /// How the rate has moved, one reading a day at most. See `RateHistory`.
     var rateHistory: [RatePoint] = []
 
+    /// Copy each automatic snapshot to iCloud Drive as well. Off by default, and only
+    /// possible in a build signed with the iCloud entitlement (see Config/).
+    var iCloudBackupEnabled: Bool = false
+
     /// Whether there is genuinely slack to loosen with. Deliberately computed from
     /// the profile alone so it stays cheap — the evaluation runs this many times over.
     var hasSlack: Bool {
@@ -503,5 +507,6 @@ extension Profile {
         weeklyReviewEnabled = try c.decodeIfPresent(Bool.self, forKey: .weeklyReviewEnabled) ?? fresh.weeklyReviewEnabled
         reviewRemindersEnabled = try c.decodeIfPresent(Bool.self, forKey: .reviewRemindersEnabled) ?? fresh.reviewRemindersEnabled
         rateHistory = try c.decodeIfPresent([RatePoint].self, forKey: .rateHistory) ?? fresh.rateHistory
+        iCloudBackupEnabled = try c.decodeIfPresent(Bool.self, forKey: .iCloudBackupEnabled) ?? fresh.iCloudBackupEnabled
     }
 }

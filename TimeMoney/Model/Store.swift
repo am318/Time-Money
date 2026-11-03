@@ -319,12 +319,20 @@ final class Store {
         // slot on an empty profile, and — worse — the oldest snapshot in the list is
         // one that puts you back into onboarding if you ever restore it.
         guard profile.hasCompletedSetup else { return .off }
-        return AutoBackup.runIfDue(backup(), everyDays: profile.autoBackupEveryDays)
+        return mirrored(AutoBackup.runIfDue(backup(), everyDays: profile.autoBackupEveryDays))
     }
 
     @discardableResult
     func snapshotNow() -> AutoBackup.Outcome {
-        AutoBackup.write(backup())
+        mirrored(AutoBackup.write(backup()))
+    }
+
+    /// Copies a freshly written snapshot to iCloud Drive when that is switched on.
+    private func mirrored(_ outcome: AutoBackup.Outcome) -> AutoBackup.Outcome {
+        if case .wrote(let url) = outcome, profile.iCloudBackupEnabled {
+            ICloudBackup.mirrorInBackground(url)
+        }
+        return outcome
     }
 
     var snapshots: [AutoBackup.Snapshot] { AutoBackup.snapshots() }

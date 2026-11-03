@@ -6,3 +6,9 @@ DEVELOPMENT_TEAM = YOUR_TEAM_ID
 
 // A prefix you own. The widget and App Group are derived from it.
 APP_BUNDLE_PREFIX = com.yourname.timemoney
+
+// Optional: copy automatic backups to iCloud Drive. Needs a paid team with the iCloud
+// capability (container "iCloud.<prefix>"). Leave commented out to keep the plain
+// App Group entitlements, which work with a free personal team.
+// APP_ENTITLEMENTS = TimeMoney-iCloud.entitlements
+// ICLOUD_ENABLED = YES

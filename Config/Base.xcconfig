@@ -8,6 +8,13 @@
 APP_BUNDLE_PREFIX = com.example.timemoney
 APP_GROUP_ID = group.$(APP_BUNDLE_PREFIX)
 
+// Which entitlements file the app is signed with. The default needs only the App Group.
+// Set TimeMoney-iCloud.entitlements in Local.xcconfig to turn on the iCloud Drive
+// backup copy, which needs a paid developer team with iCloud enabled.
+APP_ENTITLEMENTS = TimeMoney.entitlements
+ICLOUD_CONTAINER_ID = iCloud.$(APP_BUNDLE_PREFIX)
+ICLOUD_ENABLED = NO
+
 // Empty means "unsigned": fine for the simulator and for CI.
 DEVELOPMENT_TEAM =
 

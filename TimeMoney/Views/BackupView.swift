@@ -42,6 +42,13 @@ struct BackupSection: View {
                 StatRow(label: "Last snapshot", value: lastSnapshotLabel)
             }
 
+            Toggle("Also copy to iCloud Drive", isOn: $store.profile.iCloudBackupEnabled)
+                .disabled(!iCloudAvailable)
+            if !iCloudAvailable {
+                Text("iCloud isn't available in this build or on this device. To enable it, sign with the iCloud entitlement; see Config/Local.example.xcconfig.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+
             Button {
                 switch store.snapshotNow() {
                 case .wrote(let url): snapshotResult = "Saved \(url.lastPathComponent)."
@@ -84,6 +91,8 @@ struct BackupSection: View {
             Text("Written when the app opens and one is due, keeping the last \(AutoBackup.generationsKept). A snapshot identical to the one before it isn't written, so those \(AutoBackup.generationsKept) are \(AutoBackup.generationsKept) different states rather than \(AutoBackup.generationsKept) copies of today. Tap one to restore it. They live inside the app, so they survive a rebuild but not deleting it — which is what the copy below is for.")
         }
     }
+
+    private var iCloudAvailable: Bool { ICloudBackup.isAvailable }
 
     private var lastSnapshotLabel: String {
         guard let lastSnapshot else { return "None yet" }
