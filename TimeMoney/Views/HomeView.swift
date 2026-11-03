@@ -126,7 +126,7 @@ struct HomeView: View {
 
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
                         Text(Fmt.money(b.personalHourlyRate))
-                            .font(.system(size: 42, weight: .bold, design: .rounded))
+                            .scaledFont(size: 42, weight: .bold, design: .rounded)
                             .contentTransition(.numericText())
                         Text("an hour").font(.title3).foregroundStyle(.secondary)
                     }
@@ -236,7 +236,7 @@ struct HomeView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .top, spacing: 12) {
                     Image(systemName: "arrow.up.right.circle.fill")
-                        .font(.system(size: 16))
+                        .scaledFont(size: 16)
                         .foregroundStyle(.green)
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Your take-home is up \(Fmt.money(raise.incomeIncrease, decimals: false)) a month")
@@ -327,7 +327,7 @@ struct HomeView: View {
         Card {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "hourglass")
-                    .font(.system(size: 16))
+                    .scaledFont(size: 16)
                     .foregroundStyle(.orange)
                 VStack(alignment: .leading, spacing: 3) {
                     Text("You said you'd do \(cooldown.name)")
@@ -349,7 +349,7 @@ struct HomeView: View {
             Card {
                 HStack(spacing: 12) {
                     Image(systemName: "arrow.counterclockwise")
-                        .font(.system(size: 16))
+                        .scaledFont(size: 16)
                         .foregroundStyle(Color.accentColor)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("\(store.awaitingReview.count) to look back on")

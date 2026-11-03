@@ -19,7 +19,7 @@ struct SettingsView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                             Text(Fmt.money(b.personalHourlyRate))
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .scaledFont(size: 28, weight: .bold, design: .rounded)
                         }
                         Spacer()
                     }
@@ -404,7 +404,7 @@ struct HiddenScenariosSection: View {
                     } label: {
                         HStack(spacing: 12) {
                             Image(systemName: kind.template.symbol)
-                                .font(.system(size: 15))
+                                .scaledFont(size: 15)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 24)
                             Text(kind.template.title)

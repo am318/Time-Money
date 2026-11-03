@@ -88,7 +88,7 @@ struct AnswerScreen: View {
 
             VStack(spacing: 14) {
                 Text(headline)
-                    .font(.system(size: 52, weight: .bold, design: .rounded))
+                    .scaledFont(size: 52, weight: .bold, design: .rounded)
                     .multilineTextAlignment(.center)
                     .minimumScaleFactor(0.4)
                     .lineLimit(3)

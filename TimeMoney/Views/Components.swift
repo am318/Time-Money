@@ -289,7 +289,7 @@ struct FeelPicker: View {
                         withAnimation(.snappy(duration: 0.18)) { feel = level }
                     } label: {
                         Image(systemName: FeelPicker.symbol(level))
-                            .font(.system(size: 15))
+                            .scaledFont(size: 15)
                             .frame(maxWidth: .infinity, minHeight: 36)
                             .background(
                                 RoundedRectangle(cornerRadius: 9, style: .continuous)
@@ -335,7 +335,7 @@ struct HealthPicker: View {
                         withAnimation(.snappy(duration: 0.18)) { health = level }
                     } label: {
                         Image(systemName: level.symbol)
-                            .font(.system(size: 15))
+                            .scaledFont(size: 15)
                             .frame(maxWidth: .infinity, minHeight: 36)
                             .background(
                                 RoundedRectangle(cornerRadius: 9, style: .continuous)
@@ -526,5 +526,42 @@ extension View {
             guard !Task.isCancelled else { return }
             found.wrappedValue = date
         }
+    }
+}
+
+// MARK: - Dynamic Type for fixed-size type
+
+/// A font at a design size that still grows with the reader's text size setting, which
+/// `.font(.system(size:))` does not. The large display numbers also shrink to fit one line
+/// rather than wrapping or running off the screen at the biggest accessibility sizes.
+struct ScaledFont: ViewModifier {
+    @ScaledMetric private var size: CGFloat
+    private let weight: Font.Weight
+    private let design: Font.Design
+    private let isDisplay: Bool
+
+    init(size: CGFloat, weight: Font.Weight, design: Font.Design) {
+        let style: Font.TextStyle = size >= 34 ? .largeTitle : size >= 24 ? .title2 : .body
+        _size = ScaledMetric(wrappedValue: size, relativeTo: style)
+        self.weight = weight
+        self.design = design
+        self.isDisplay = size >= 26
+    }
+
+    func body(content: Content) -> some View {
+        if isDisplay {
+            content
+                .font(.system(size: size, weight: weight, design: design))
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+        } else {
+            content.font(.system(size: size, weight: weight, design: design))
+        }
+    }
+}
+
+extension View {
+    func scaledFont(size: CGFloat, weight: Font.Weight = .regular, design: Font.Design = .default) -> some View {
+        modifier(ScaledFont(size: size, weight: weight, design: design))
     }
 }

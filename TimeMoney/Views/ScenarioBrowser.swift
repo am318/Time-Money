@@ -62,7 +62,7 @@ struct ScenarioRow: View {
         Button(action: action) {
             HStack(spacing: 12) {
                 Image(systemName: t.symbol)
-                    .font(.system(size: 16))
+                    .scaledFont(size: 16)
                     .foregroundStyle(Color.accentColor)
                     .frame(width: 26)
                 VStack(alignment: .leading, spacing: 2) {
@@ -97,7 +97,7 @@ struct ScenarioTile: View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 8) {
                 Image(systemName: t.symbol)
-                    .font(.system(size: 17, weight: .medium))
+                    .scaledFont(size: 17, weight: .medium)
                     .foregroundStyle(Color.accentColor)
                     .frame(height: 20)
                 Text(t.title)
@@ -140,7 +140,7 @@ struct DecisionRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: decision.scenario.template.symbol)
-                .font(.system(size: 15))
+                .scaledFont(size: 15)
                 .foregroundStyle(Color.accentColor)
                 .frame(width: 26)
             VStack(alignment: .leading, spacing: 2) {

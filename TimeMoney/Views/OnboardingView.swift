@@ -170,7 +170,7 @@ struct OnboardingView: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         Text(Fmt.money(store.breakdown.personalHourlyRate))
-                            .font(.system(size: 40, weight: .bold, design: .rounded))
+                            .scaledFont(size: 40, weight: .bold, design: .rounded)
                             .contentTransition(.numericText())
                         Text("You can change any of this later, and overrule it entirely if it doesn't feel right.")
                             .font(.caption)
@@ -211,7 +211,7 @@ struct OnboardingView: View {
     private func bullet(_ symbol: String, _ text: String) -> some View {
         HStack(spacing: 12) {
             Image(systemName: symbol)
-                .font(.system(size: 17))
+                .scaledFont(size: 17)
                 .foregroundStyle(Color.accentColor)
                 .frame(width: 26)
             Text(text)
@@ -230,6 +230,8 @@ struct OnboardingView: View {
                         .animation(.snappy(duration: 0.2), value: page)
                 }
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Page \(page + 1) of \(lastPage + 1)")
 
             Button {
                 if page < lastPage {

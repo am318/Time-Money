@@ -258,8 +258,10 @@ struct DecisionFlowView: View {
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Button { step(-1) } label: { Image(systemName: "chevron.up") }
+                    .accessibilityLabel("Previous field")
                     .disabled((stepIndex ?? 0) <= 0)
                 Button { step(1) } label: { Image(systemName: "chevron.down") }
+                    .accessibilityLabel("Next field")
                     .disabled(stepIndex == nil || stepIndex! >= fieldOrder.count - 1)
                 Spacer()
                 Button("Done") { focus = nil }.fontWeight(.semibold)

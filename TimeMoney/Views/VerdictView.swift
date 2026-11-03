@@ -89,7 +89,7 @@ struct VerdictView: View {
             VStack(alignment: .leading, spacing: 8) {
                 if let winner = VerdictText.winnerName(for: evaluation, decision: decision) {
                     Text(winner)
-                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .scaledFont(size: 30, weight: .bold, design: .rounded)
                         .fixedSize(horizontal: false, vertical: true)
 
                     switch evaluation.tiebreak {
@@ -110,7 +110,7 @@ struct VerdictView: View {
                     }
                 } else {
                     Text("Genuinely either")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .scaledFont(size: 28, weight: .bold, design: .rounded)
                     Text("Same money, same time, same everything. There's no answer to find here — pick one and stop thinking about it.")
                         .font(.subheadline).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -137,7 +137,7 @@ struct VerdictView: View {
                 switch evaluation.payback {
                 case .immediate:
                     Text("Straight away")
-                        .font(.system(size: 26, weight: .bold, design: .rounded))
+                        .scaledFont(size: 26, weight: .bold, design: .rounded)
                     Text("\(Fmt.sentenceStart(invested)) is ahead from the first month. There's nothing to pay back.")
                         .font(.footnote).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -146,14 +146,14 @@ struct VerdictView: View {
                     Text(months < 12
                          ? "\(Int(months.rounded())) months"
                          : String(format: "%.1f years", months / 12))
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .scaledFont(size: 28, weight: .bold, design: .rounded)
                     Text("\(Fmt.sentenceStart(invested)) is behind until then, and ahead every day after. So the real question is how long you'll keep it.")
                         .font(.footnote).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                 case .never:
                     Text("It doesn't")
-                        .font(.system(size: 26, weight: .bold, design: .rounded))
+                        .scaledFont(size: 26, weight: .bold, design: .rounded)
                     Text("\(Fmt.sentenceStart(invested)) never catches up, even given fifty years of it.")
                         .font(.footnote).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -534,6 +534,9 @@ struct BreakEvenScale: View {
                 }
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Your rate against the tipping point")
+        .accessibilityValue("Your hour is worth \(Fmt.rate(yourRate)). The tipping point is \(Fmt.rate(breakEven)). \(youWin ? "You are above it." : "You are below it.")")
     }
 }
 

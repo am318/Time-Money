@@ -16,7 +16,7 @@ struct BigChoice<Value: Hashable>: View {
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: selection == option ? "largecircle.fill.circle" : "circle")
-                            .font(.system(size: 20))
+                            .scaledFont(size: 20)
                             .foregroundStyle(selection == option ? Color.accentColor : Color.secondary.opacity(0.5))
 
                         VStack(alignment: .leading, spacing: 2) {

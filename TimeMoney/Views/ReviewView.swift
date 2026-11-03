@@ -64,7 +64,7 @@ struct ReviewCard: View {
                             withAnimation(.snappy) { store.setReview(outcome, for: decision) }
                         } label: {
                             VStack(spacing: 5) {
-                                Image(systemName: outcome.symbol).font(.system(size: 15))
+                                Image(systemName: outcome.symbol).scaledFont(size: 15)
                                 Text(outcome.label).font(.caption2.weight(.medium))
                                     .lineLimit(1).minimumScaleFactor(0.8)
                             }
@@ -206,7 +206,7 @@ struct InContextView: View {
                                 .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                             HStack(alignment: .firstTextBaseline, spacing: 6) {
                                 Text(Fmt.money(ctx.totalCommitted, decimals: false))
-                                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                                    .scaledFont(size: 34, weight: .bold, design: .rounded)
                                 Text("on things you bought")
                                     .font(.subheadline).foregroundStyle(.secondary)
                             }
@@ -229,7 +229,7 @@ struct InContextView: View {
                                 }
                                 HStack(alignment: .firstTextBaseline, spacing: 5) {
                                     Text(Fmt.money(item.perDay))
-                                        .font(.system(size: 26, weight: .bold, design: .rounded))
+                                        .scaledFont(size: 26, weight: .bold, design: .rounded)
                                     Text("a day").font(.subheadline).foregroundStyle(.secondary)
                                 }
                                 Text("\(item.daysSince) days ago, so it's cost you \(item.comparison).")

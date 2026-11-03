@@ -22,7 +22,7 @@ struct RateDetailView: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         Text(Fmt.money(b.personalHourlyRate))
-                            .font(.system(size: 48, weight: .bold, design: .rounded))
+                            .scaledFont(size: 48, weight: .bold, design: .rounded)
                         if b.isOverridden {
                             Text("Set by hand. The working below shows what the numbers would have said.")
                                 .font(.caption)
